@@ -1,0 +1,62 @@
+﻿@page "/CambiodeMoneda"
+@rendermode InteractiveServer
+
+<h3>CambiodeMoneda</h3>
+
+<div class="contenedor">
+
+    <div class="titulo">Cambio de moneda</div>
+
+    <div class="form-group">
+        <label>Pesos</label>
+        <input type="number" class="form-control" @bind="pesos" />
+    </div>
+
+    <button class="btn-custom" @onclick="CalcularCambio">Convertir</button>
+
+    <br /><br />
+
+    <div class="form-group">
+        <label>Dólares</label>
+        <input class="form-control resultado" value="@dolares" readonly />
+    </div>
+
+    <div class="form-group">
+        <label>Euros</label>
+        <input class="form-control resultado" value="@euros" readonly />
+    </div>
+
+    <div class="form-group">
+        <label>Libras</label>
+        <input class="form-control resultado" value="@libras" readonly />
+    </div>
+
+</div>
+
+@code {
+    private double pesos;
+    private double dolares;
+    private double euros;
+    private double libras;
+
+    // Tasas (como pide la tarea)
+    private double tasaDolar = 0.058;
+    private double tasaEuro = 0.054;
+    private double tasaLibra = 0.046;
+
+    private void CalcularCambio()
+    {
+        if (pesos > 0)
+        {
+            dolares = pesos * tasaDolar;
+            euros = pesos * tasaEuro;
+            libras = pesos * tasaLibra;
+        }
+        else
+        {
+            dolares = 0;
+            euros = 0;
+            libras = 0;
+        }
+    }
+}
