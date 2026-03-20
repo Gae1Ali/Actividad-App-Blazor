@@ -1,0 +1,66 @@
+﻿@page "/DiasMes"
+@rendermode InteractiveServer
+<h3>Conocer los días del mes</h3>
+
+<div class="mb-3">
+    <label>Mes</label>
+    <input type="number" class="form-control" @bind="mes" />
+</div>
+
+<div class="mb-3">
+    <label>Año</label>
+    <input type="number" class="form-control" @bind="anio" />
+</div>
+
+<button class="btn btn-primary" @onclick="CalcularDias">
+    Mostrar número de días
+</button>
+
+@if (mensaje != "")
+{
+    <h4 class="mt-3">@mensaje</h4>
+}
+
+@code {
+    int mes;
+    int anio;
+    string mensaje = "";
+
+    void CalcularDias()
+    {
+        if (mes < 1 || mes > 12 || anio <= 0)
+        {
+            mensaje = "Por favor ingresa valores válidos.";
+            return;
+        }
+
+        int dias = 0;
+
+        // Meses con 31 días
+        if (mes == 1 || mes == 3 || mes == 5 || mes == 7 ||
+            mes == 8 || mes == 10 || mes == 12)
+        {
+            dias = 31;
+        }
+        // Meses con 30 días
+        else if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+        {
+            dias = 30;
+        }
+        // Febrero
+        else if (mes == 2)
+        {
+            if (EsBisiesto(anio))
+                dias = 29;
+            else
+                dias = 28;
+        }
+
+        mensaje = $"El mes {mes} del año {anio} tiene {dias} días";
+    }
+
+    bool EsBisiesto(int anio)
+    {
+        return (anio % 4 == 0 && anio % 100 != 0) || (anio % 400 == 0);
+    }
+}
