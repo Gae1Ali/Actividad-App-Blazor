@@ -1,0 +1,38 @@
+﻿@* Archivo: EstadoComponente.razor *@
+
+<div class="alert @colorClass" role="alert" style="max-width: 400px; margin-top: 10px;">
+    <strong>Código @CodigoEstado:</strong> @mensaje
+</div>
+
+@code {
+    [Parameter]
+    public int CodigoEstado { get; set; }
+
+    private string mensaje = "Sistema Operacional";
+    private string colorClass = "alert-success";
+
+    // Este método se ejecuta CADA VEZ que el valor de CodigoEstado cambia desde la página padre
+    protected override void OnParametersSet()
+    {
+        ActualizarEstado();
+    }
+
+    private void ActualizarEstado()
+    {
+        mensaje = CodigoEstado switch
+        {
+            200 => "Sistema Operacional",
+            404 => "Recurso No Encontrado",
+            500 => "Error Interno del Servidor",
+            _ => "Estado Desconocido"
+        };
+
+        colorClass = CodigoEstado switch
+        {
+            200 => "alert-success",
+            404 => "alert-warning",
+            500 => "alert-danger",
+            _ => "alert-secondary"
+        };
+    }
+}
