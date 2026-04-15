@@ -1,0 +1,134 @@
+﻿@page "/canciones"
+@rendermode InteractiveServer
+<h3>Lista de canciones</h3>
+
+<!-- Agregar / Modificar -->
+<div class="mb-3">
+    <label>Título</label>
+    <input type="text" class="form-control" @bind="tituloInput" />
+</div>
+
+<button class="btn btn-success me-2" @onclick="Agregar">
+    Agregar
+</button>
+
+<button class="btn btn-warning" @onclick="GuardarEdicion" disabled="@(!editando)">
+    Guardar cambios
+</button>
+
+<br /> <br />
+
+<!-- Filtro -->
+<div class="mb-3">
+    <label>Filtrar</label>
+    <input type="text" class="form-control" placeholder="Ej: summer" @bind="filtro" />
+</div>
+
+<!-- Orden -->
+<button class="btn btn-info me-2" @onclick="OrdenAsc">
+    Orden Ascendente
+</button>
+
+<button class="btn btn-secondary" @onclick="OrdenDesc">
+    Orden Descendente
+</button>
+
+<br /> <br />
+
+<h4>Canciones</h4>
+
+@if (ListaFiltrada().Count > 0)
+{
+    @foreach (var cancion in ListaFiltrada())
+    {
+        <div class="d-flex mb-2">
+            <div class="form-control me-2">
+                @cancion
+            </div>
+
+            <button class="btn btn-primary me-2" @onclick="() => Editar(cancion)">
+                Editar
+            </button>
+
+            <button class="btn btn-danger" @onclick="() => Eliminar(cancion)">
+                Eliminar
+            </button>
+        </div>
+    }
+}
+else
+{
+    <p>No hay canciones.</p>
+}
+
+@code {
+    List<string> canciones = new List<string>();
+    string tituloInput = "";
+    string filtro = "";
+
+    bool editando = false;
+    string cancionEditando = "";
+
+    // 🔹 Agregar
+    void Agregar()
+    {
+        if (!string.IsNullOrWhiteSpace(tituloInput))
+        {
+            canciones.Add(tituloInput);
+            tituloInput = "";
+        }
+    }
+
+    // 🔹 Eliminar
+    void Eliminar(string cancion)
+    {
+        canciones.Remove(cancion);
+    }
+
+    // 🔹 Editar
+    void Editar(string cancion)
+    {
+        tituloInput = cancion;
+        cancionEditando = cancion;
+        editando = true;
+    }
+
+    // 🔹 Guardar cambios
+    void GuardarEdicion()
+    {
+        if (editando && !string.IsNullOrWhiteSpace(tituloInput))
+        {
+            int index = canciones.IndexOf(cancionEditando);
+            if (index != -1)
+            {
+                canciones[index] = tituloInput;
+            }
+
+            tituloInput = "";
+            editando = false;
+        }
+    }
+
+    // 🔹 Ordenar ascendente
+    void OrdenAsc()
+    {
+        canciones = canciones.OrderBy(x => x).ToList();
+    }
+
+    // 🔹 Ordenar descendente
+    void OrdenDesc()
+    {
+        canciones = canciones.OrderByDescending(x => x).ToList();
+    }
+
+    // 🔹 Filtrar
+    List<string> ListaFiltrada()
+    {
+        if (string.IsNullOrWhiteSpace(filtro))
+            return canciones;
+
+        return canciones
+            .Where(x => x.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+}
