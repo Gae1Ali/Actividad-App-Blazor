@@ -1,0 +1,16 @@
+﻿Restricción obligatoria:
+
+• El código del proyecto debe contener únicamente código que haya sido abordado
+en algún tema de las clases. Hecho ✔️
+• No se acepta código que no se relacione con alguno de los temas trabajados en las
+clases.  Hecho ✔️
+
+Escala de calificación:
+
+• Interfaz de usuario completa, en donde se incluye el formulario, la activación de los
+diferentes botones en los momentos necesarios. 3 puntos. Hecho ✔️
+• Botón “Guardar” funcionando correctamente (validar que el número de inventario
+no se repita y se muestre el mensaje de error). 2 puntos. Hecho ✔️
+• Botón “Eliminar” funcionando correctamente. 1 punto. Hecho ✔️
+• Botón “Modificar” funcionando correctamente. 1 punto. Hecho ✔️
+• Botones de “Existencia” y “Listado” funcionando correctamente. 3 punto. Hecho ✔️

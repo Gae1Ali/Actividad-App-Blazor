@@ -1,0 +1,244 @@
+﻿@page "/productos"
+@rendermode InteractiveServer
+
+<h3>Registro de Productos</h3>
+
+<!-- FORMULARIO -->
+<label>Número de inventario</label>
+<input type="number" @bind="numero" />
+<br />
+
+<label>Nombre del producto</label>
+<input type="text" @bind="nombre" />
+<br />
+
+<label>Departamento</label>
+<select @bind="departamento">
+    <option value="">Seleccione</option>
+    <option value="Frutas">Frutas</option>
+    <option value="Verduras">Verduras</option>
+    <option value="Lacteos">Lácteos</option>
+</select>
+
+<br />
+<br />
+
+@if (!editando)
+{
+    <button @onclick="Guardar">Guardar</button>
+}
+else
+{
+    <button @onclick="Actualizar">Actualizar</button>
+    <button @onclick="Cancelar">Cancelar</button>
+}
+
+<button @onclick="MostrarExistencias">Existencias</button>
+<button @onclick="MostrarListado">Listado</button>
+
+<p style="color:red">@mensajeError</p>
+
+<hr />
+
+<!-- LISTADO -->
+@if (!verExistencias)
+{
+    <h4>Listado de Productos</h4>
+
+    <table border="1">
+        <tr>
+            <th>No.</th>
+            <th>Nombre</th>
+            <th>Departamento</th>
+            <th>Acciones</th>
+        </tr>
+
+        @foreach (var p in productos)
+        {
+            <tr>
+                <td>@p.NumeroInventario</td>
+                <td>@p.Nombre</td>
+                <td>@p.Departamento</td>
+                <td>
+                    <button @onclick="() => Eliminar(p)">Eliminar</button>
+                    <button @onclick="() => Editar(p)">Editar</button>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+<!-- EXISTENCIAS -->
+@if (verExistencias)
+{
+    <h4>Existencias por Departamento</h4>
+
+    <p>Frutas: @contarFrutas</p>
+    <p>Verduras: @contarVerduras</p>
+    <p>Lácteos: @contarLacteos</p>
+}
+
+@code {
+
+    int numero;
+    string nombre = "";
+    string departamento = "";
+    string mensajeError = "";
+
+    List<Producto> productos = new List<Producto>();
+
+    bool editando = false;
+    Producto productoEditar;
+
+    bool verExistencias = false;
+
+    int contarFrutas = 0;
+    int contarVerduras = 0;
+    int contarLacteos = 0;
+
+    // VALIDACIÓN GENERAL
+    bool Validar()
+    {
+        if (numero <= 0)
+        {
+            mensajeError = "El número de inventario debe ser positivo";
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(nombre))
+        {
+            mensajeError = "El nombre no puede estar vacío";
+            return false;
+        }
+
+        if (nombre.Length > 200)
+        {
+            mensajeError = "El nombre no puede exceder 200 caracteres";
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(departamento))
+        {
+            mensajeError = "Debe seleccionar un departamento";
+            return false;
+        }
+
+        return true;
+    }
+
+    // GUARDAR
+    void Guardar()
+    {
+        mensajeError = "";
+
+        if (!Validar()) return;
+
+        foreach (var p in productos)
+        {
+            if (p.NumeroInventario == numero)
+            {
+                mensajeError = "El número de inventario ya existe";
+                return;
+            }
+        }
+
+        Producto nuevo = new Producto();
+        nuevo.NumeroInventario = numero;
+        nuevo.Nombre = nombre;
+        nuevo.Departamento = departamento;
+
+        productos.Add(nuevo);
+
+        Limpiar();
+    }
+
+    // ELIMINAR
+    void Eliminar(Producto p)
+    {
+        productos.Remove(p);
+    }
+
+    // EDITAR
+    void Editar(Producto p)
+    {
+        editando = true;
+        productoEditar = p;
+
+        numero = p.NumeroInventario;
+        nombre = p.Nombre;
+        departamento = p.Departamento;
+    }
+
+    // ACTUALIZAR
+    void Actualizar()
+    {
+        mensajeError = "";
+
+        if (!Validar()) return;
+
+        foreach (var p in productos)
+        {
+            if (p != productoEditar && p.NumeroInventario == numero)
+            {
+                mensajeError = "El número de inventario ya existe";
+                return;
+            }
+        }
+
+        productoEditar.NumeroInventario = numero;
+        productoEditar.Nombre = nombre;
+        productoEditar.Departamento = departamento;
+
+        editando = false;
+
+        Limpiar();
+    }
+
+    // CANCELAR
+    void Cancelar()
+    {
+        editando = false;
+        Limpiar();
+    }
+
+    // EXISTENCIAS
+    void MostrarExistencias()
+    {
+        verExistencias = true;
+
+        contarFrutas = 0;
+        contarVerduras = 0;
+        contarLacteos = 0;
+
+        foreach (var p in productos)
+        {
+            switch (p.Departamento)
+            {
+                case "Frutas":
+                    contarFrutas++;
+                    break;
+
+                case "Verduras":
+                    contarVerduras++;
+                    break;
+
+                case "Lacteos":
+                    contarLacteos++;
+                    break;
+            }
+        }
+    }
+
+    void MostrarListado()
+    {
+        verExistencias = false;
+    }
+
+    void Limpiar()
+    {
+        numero = 0;
+        nombre = "";
+        departamento = "";
+        mensajeError = "";
+    }
+}
