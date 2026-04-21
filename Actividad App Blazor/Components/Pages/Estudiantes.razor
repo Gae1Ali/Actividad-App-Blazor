@@ -1,0 +1,81 @@
+﻿@page "/estudiantes"
+@rendermode InteractiveServer
+<div class="container">
+
+    <h3>Registro de Estudiantes</h3>
+
+    <EditForm Model="@estudiante" OnValidSubmit="GuardarEstudiante">
+        <DataAnnotationsValidator />
+
+        <label>Nombre:</label>
+        <InputText @bind-Value="estudiante.Nombre" />
+        <ValidationMessage For="@(() => estudiante.Nombre)" />
+
+        <label>Correo:</label>
+        <InputText @bind-Value="estudiante.Correo" />
+        <ValidationMessage For="@(() => estudiante.Correo)" />
+
+        <label>Calificación:</label>
+        <InputNumber @bind-Value="estudiante.Calificacion" />
+        <ValidationMessage For="@(() => estudiante.Calificacion)" />
+
+        <br />
+
+        <button type="submit">Guardar</button>
+    </EditForm>
+
+    <h4>Lista de estudiantes</h4>
+
+    @if (listaEstudiantes.Count == 0)
+    {
+        <p>No hay estudiantes registrados.</p>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Calificación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in listaEstudiantes)
+                {
+                    <tr>
+                        <td>@item.Nombre</td>
+                        <td>@item.Correo</td>
+                        <td>@item.Calificacion</td>
+                        <td>
+                            <button @onclick="() => EliminarEstudiante(item)">
+                                🗑
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</div>
+
+@code {
+    Estudiante estudiante = new Estudiante();
+
+    List<Estudiante> listaEstudiantes = new List<Estudiante>();
+
+    void GuardarEstudiante()
+    {
+        listaEstudiantes.Add(estudiante);
+
+        // limpiar formulario
+        estudiante = new Estudiante();
+    }
+
+    void EliminarEstudiante(Estudiante e)
+    {
+        listaEstudiantes.Remove(e);
+    }
+}
